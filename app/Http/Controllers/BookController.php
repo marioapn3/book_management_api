@@ -20,8 +20,7 @@ class BookController extends Controller
     public function index()
     {
         try {
-            // $books = $this->bookService->getAllData();
-            $books = Book::all();
+            $books = $this->bookService->getAllData();
             $data = ListBookResource::collection($books);
             return response()->json([
                 'data' => $data,
@@ -71,12 +70,12 @@ class BookController extends Controller
         }
     }
 
-    public function update(BookRequest $request, $id)
+    public function update(Request $request, $id)
     {
         try {
             $book = $this->bookService->update(
                 $id,
-                $request,
+                $request
             );
             return response()->json([
                 'data' => ListBookResource::make($book),
@@ -90,6 +89,7 @@ class BookController extends Controller
             ], 500);
         }
     }
+
 
     public function destroy($id)
     {

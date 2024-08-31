@@ -8,6 +8,11 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::apiResource('books', BookController::class);
 
-
+Route::controller(BookController::class)->prefix('books')->group(function () {
+    Route::get('/', 'index');
+    Route::post('/', 'store');
+    Route::get('/{id}', 'show');
+    Route::post('/{id}', 'update');
+    Route::delete('/{id}', 'destroy');
+});
