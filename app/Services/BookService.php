@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Book;
+use Exception;
 
 class BookService
 {
@@ -27,6 +28,10 @@ class BookService
     public function update($id, $request)
     {
         $book = Book::find($id);
+        if (!$book) {
+            throw new \Exception("Book not found");
+        }
+
         $book->update($request->all());
         return $book;
     }
