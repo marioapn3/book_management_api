@@ -24,7 +24,13 @@ class BookService
 
     public function store($request)
     {
-        $book = Book::create($request->all());
+        $inputs = $request->only('title', 'author', 'category', 'description');
+        $fileService = new FileService();
+        if ($request->hasFile('image')) {
+            $image = $fileService->uploadFile($request->file('image'), 'books');
+            $inputs['image'] = $image;
+        }
+        $book = Book::create($inputs);
         return $book;
     }
 
@@ -34,8 +40,15 @@ class BookService
         if (!$book) {
             throw new \Exception("Book not found");
         }
+        $inputs = $request->only('title', 'author', 'category', 'description');
+        if ($request->hasFile('image')) {
+            $fileService = new FileService();
+            $fileService->removeFile($book->image);
+            $image = $fileService->uploadFile($request->file('image'), 'books');
+            $inputs['image'] = $image;
+        }
 
-        $book->update($request->all());
+        $book->update($inputs);
         return $book;
     }
 
@@ -45,6 +58,8 @@ class BookService
         if (!$book) {
             throw new \Exception("Book not found");
         }
+        $fileService = new FileService();
+        $fileService->removeFile($book->image);
         $book->delete();
         return $book;
     }

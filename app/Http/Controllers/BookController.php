@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BookRequest;
+use App\Http\Resources\ListBookResource;
+use App\Models\Book;
 use App\Services\BookService;
 use Illuminate\Http\Request;
 
@@ -18,9 +20,11 @@ class BookController extends Controller
     public function index()
     {
         try {
-            $books = $this->bookService->getAllData();
+            // $books = $this->bookService->getAllData();
+            $books = Book::all();
+            $data = ListBookResource::collection($books);
             return response()->json([
-                'data' => $books,
+                'data' => $data,
                 'message' => 'Books retrieved successfully'
             ], 200);
         } catch (\Exception $e) {
@@ -32,12 +36,13 @@ class BookController extends Controller
         }
     }
 
+
     public function store(BookRequest $request)
     {
         try {
             $book = $this->bookService->store($request);
             return response()->json([
-                'data' => $book,
+                'data' => ListBookResource::make($book),
                 'message' => 'Book created successfully'
             ], 201);
         } catch (\Exception $e) {
@@ -54,7 +59,7 @@ class BookController extends Controller
         try {
             $book = $this->bookService->getDataById($id);
             return response()->json([
-                'data' => $book,
+                'data' => ListBookResource::make($book),
                 'message' => 'Book retrieved successfully'
             ], 200);
         } catch (\Exception $e) {
@@ -74,7 +79,7 @@ class BookController extends Controller
                 $request,
             );
             return response()->json([
-                'data' => $book,
+                'data' => ListBookResource::make($book),
                 'message' => 'Book updated successfully'
             ], 200);
         } catch (\Exception $e) {
