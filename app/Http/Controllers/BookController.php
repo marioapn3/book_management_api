@@ -36,7 +36,7 @@ class BookController extends Controller
     }
 
 
-    public function store(BookRequest $request)
+    public function store(Request $request)
     {
         try {
             $book = $this->bookService->store($request);
