@@ -36,33 +36,45 @@ class BookService
 
     public function update($id, $request)
     {
+        $fileService = new FileService();
+
         $book = Book::find($id);
+
         if (!$book) {
             throw new \Exception("Book not found");
         }
+
+        if ($book->image) {
+            $fileService->removeFile($book->image);
+        }
+
         $inputs = $request->only('title', 'author', 'category', 'description');
-        $fileService = new FileService();
+
         if ($request->hasFile('image')) {
-            if ($book->image) {
-                $fileService->removeFile($book->image);
-            }
+
             $image = $fileService->uploadFile($request->file('image'), 'books');
             $inputs['image'] = $image;
         }
 
         $book->update($inputs);
+
         return $book;
     }
 
     public function destroy($id)
     {
+        $fileService = new FileService();
+
         $book = Book::find($id);
+
         if (!$book) {
             throw new \Exception("Book not found");
         }
-        $fileService = new FileService();
+
         $fileService->removeFile($book->image);
+
         $book->delete();
+
         return $book;
     }
 }

@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BookRequest;
+use App\Http\Requests\CreateBookRequest;
+use App\Http\Requests\UpdateBookRequest;
 use App\Http\Resources\ListBookResource;
 use App\Models\Book;
 use App\Services\BookService;
 use App\Services\ApiResponseService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class BookController extends Controller
 {
@@ -29,15 +32,17 @@ class BookController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function store(CreateBookRequest $request)
     {
         try {
             $book = $this->bookService->store($request);
             return ApiResponseService::success(ListBookResource::make($book), 'Book created successfully', 201);
         } catch (\Exception $e) {
+            Log::error('Error in store method: ' . $e->getMessage());
             return ApiResponseService::error('Failed to create book', 500, $e->getMessage());
         }
     }
+
 
     public function show($id)
     {
@@ -49,7 +54,7 @@ class BookController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateBookRequest $request, $id)
     {
         try {
             $book = $this->bookService->update($id, $request);
