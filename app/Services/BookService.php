@@ -39,6 +39,9 @@ class BookService
     public function destroy($id)
     {
         $book = Book::find($id);
+        if (!$book) {
+            throw new \Exception("Book not found");
+        }
         $book->delete();
         return $book;
     }
