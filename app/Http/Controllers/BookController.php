@@ -71,7 +71,7 @@ class BookController extends Controller
         try {
             $book = $this->bookService->update(
                 $id,
-                $request->all()
+                $request,
             );
             return response()->json([
                 'data' => $book,

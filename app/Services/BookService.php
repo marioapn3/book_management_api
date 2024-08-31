@@ -24,7 +24,7 @@ class BookService
         return $book;
     }
 
-    public function update($request, $id)
+    public function update($id, $request)
     {
         $book = Book::find($id);
         $book->update($request->all());
