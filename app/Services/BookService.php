@@ -41,9 +41,11 @@ class BookService
             throw new \Exception("Book not found");
         }
         $inputs = $request->only('title', 'author', 'category', 'description');
+        $fileService = new FileService();
         if ($request->hasFile('image')) {
-            $fileService = new FileService();
-            $fileService->removeFile($book->image);
+            if ($book->image) {
+                $fileService->removeFile($book->image);
+            }
             $image = $fileService->uploadFile($request->file('image'), 'books');
             $inputs['image'] = $image;
         }
