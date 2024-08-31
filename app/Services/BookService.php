@@ -16,6 +16,9 @@ class BookService
     public function getDataById($id)
     {
         $book = Book::find($id);
+        if (!$book) {
+            throw new Exception("Book not found");
+        }
         return $book;
     }
 
