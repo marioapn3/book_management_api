@@ -6,6 +6,7 @@ use App\Http\Requests\BookRequest;
 use App\Http\Resources\ListBookResource;
 use App\Models\Book;
 use App\Services\BookService;
+use App\Services\ApiResponseService;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
@@ -22,34 +23,19 @@ class BookController extends Controller
         try {
             $books = $this->bookService->getAllData();
             $data = ListBookResource::collection($books);
-            return response()->json([
-                'data' => $data,
-                'message' => 'Books retrieved successfully'
-            ], 200);
+            return ApiResponseService::success($data, 'Books retrieved successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'data' => null,
-                'message' => 'Failed to retrieve books',
-                'error' => $e->getMessage(),
-            ], 500);
+            return ApiResponseService::error('Failed to retrieve books', 500, $e->getMessage());
         }
     }
-
 
     public function store(Request $request)
     {
         try {
             $book = $this->bookService->store($request);
-            return response()->json([
-                'data' => ListBookResource::make($book),
-                'message' => 'Book created successfully'
-            ], 201);
+            return ApiResponseService::success(ListBookResource::make($book), 'Book created successfully', 201);
         } catch (\Exception $e) {
-            return response()->json([
-                'data' => null,
-                'message' => 'Failed to create book',
-                'error' => $e->getMessage(),
-            ], 500);
+            return ApiResponseService::error('Failed to create book', 500, $e->getMessage());
         }
     }
 
@@ -57,54 +43,29 @@ class BookController extends Controller
     {
         try {
             $book = $this->bookService->getDataById($id);
-            return response()->json([
-                'data' => ListBookResource::make($book),
-                'message' => 'Book retrieved successfully'
-            ], 200);
+            return ApiResponseService::success(ListBookResource::make($book), 'Book retrieved successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'data' => null,
-                'message' => 'Failed to retrieve book',
-                'error' => $e->getMessage(),
-            ], 500);
+            return ApiResponseService::error('Failed to retrieve book', 500, $e->getMessage());
         }
     }
 
     public function update(Request $request, $id)
     {
         try {
-            $book = $this->bookService->update(
-                $id,
-                $request
-            );
-            return response()->json([
-                'data' => ListBookResource::make($book),
-                'message' => 'Book updated successfully'
-            ], 200);
+            $book = $this->bookService->update($id, $request);
+            return ApiResponseService::success(ListBookResource::make($book), 'Book updated successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'data' => null,
-                'message' => 'Failed to update book',
-                'error' => $e->getMessage(),
-            ], 500);
+            return ApiResponseService::error('Failed to update book', 500, $e->getMessage());
         }
     }
-
 
     public function destroy($id)
     {
         try {
             $this->bookService->destroy($id);
-            return response()->json([
-                'data' => null,
-                'message' => 'Book deleted successfully'
-            ], 200);
+            return ApiResponseService::success(null, 'Book deleted successfully');
         } catch (\Exception $e) {
-            return response()->json([
-                'data' => null,
-                'message' => 'Failed to delete book',
-                'error' => $e->getMessage(),
-            ], 500);
+            return ApiResponseService::error('Failed to delete book', 500, $e->getMessage());
         }
     }
 }
